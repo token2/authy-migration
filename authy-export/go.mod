@@ -1,4 +1,4 @@
-module github.com/token2/authy-migration/cmd/authy-export
+module github.com/token2/authy-migration/authy-export
 
 go 1.12
 
