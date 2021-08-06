@@ -17,7 +17,7 @@ This program will enrol itself as an additional device on your Authy account and
 
 **Installation**
 
-Pre-built binaries are available from the [page](https://token2.swiss/authy-migration/).
+Pre-built binaries are available from the [page](https://www.token2.swiss/site/page/how-to-transfer-totp-profiles-from-authy-to-a-token2-hardware-token).
 
 Alternatively, it can be compiled from source, which requires [Go 1.12 or newer](https://golang.org/doc/install):
 
