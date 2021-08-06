@@ -1,4 +1,4 @@
-module github.com/alexzorin/authy
+module github.com/token2/authy-migration/
 
 go 1.12
 
