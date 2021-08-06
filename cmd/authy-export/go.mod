@@ -1,4 +1,4 @@
-module /github.com/token2/authy-migration/cmd/authy-export
+module github.com/token2/authy-migration/cmd/authy-export
 
 go 1.12
 
@@ -9,4 +9,4 @@ require (
 	golang.org/x/term v0.0.0-20210406210042-72f3dc4e9b72 // indirect
 )
 
-replace /github.com/token2/authy-migration => ../../
+replace github.com/token2/authy-migration => ../../
