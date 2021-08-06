@@ -12,12 +12,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
- 
-	 
-	 
-	"encoding/base64"
-	"github.com/token2/authy-migration"
+ 	"encoding/base64"
 	
+	"github.com/token2/authy-migration"
 	"golang.org/x/crypto/ssh/terminal"
 )
 
