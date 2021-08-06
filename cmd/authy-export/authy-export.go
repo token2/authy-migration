@@ -12,10 +12,16 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
+ 
+	 
+	 
+	"encoding/base64"
 	"github.com/alexzorin/authy"
+	
 	"golang.org/x/crypto/ssh/terminal"
 )
+
+import qrcode "github.com/skip2/go-qrcode"
 
 // We'll persist this to the filesystem so we don't need to
 // re-register the device every time
@@ -26,7 +32,40 @@ type deviceRegistration struct {
 	APIKey   string `json:"api_key,omitempty"`
 }
 
+func lineCounter(fileName string) int {
+    f, _ := os.Open(fileName)
+    // Create new Scanner.
+    scanner := bufio.NewScanner(f)
+    result := 0
+    // Use Scan.
+    for scanner.Scan() {
+        //line := scanner.Text()
+        // Append line to result.
+        result = result +1
+    }
+    return result
+}
+
 func main() {
+    
+	//ask for export file name and type
+	var filename string
+    var name1 string
+	var line int
+	var err error
+ 
+	 
+	sc := bufio.NewScanner(os.Stdin)
+	
+	fmt.Print("\nExport file name -.txt for Molto2 and .html for regular TOTP profiles  : ")
+	if !sc.Scan() {
+		fmt.Print("A filename is required")
+	}
+	filename = strings.TrimSpace(sc.Text())
+		fmt.Print("File: "+filename)
+	
+
+
 	// If we don't already have a registered device, prompt the user for one
 	regr, err := loadExistingDeviceRegistration()
 	if err == nil {
@@ -78,7 +117,7 @@ func main() {
 	}
 
 	// Print out in https://github.com/google/google-authenticator/wiki/Key-Uri-Format format
-	log.Println("Here are your authenticator tokens:\n")
+	log.Println("TOTP profile migration file is being generated:\n")
 	for _, tok := range tokensResponse.AuthenticatorTokens {
 		decrypted, err := tok.Decrypt(string(pp))
 		if err != nil {
@@ -89,13 +128,83 @@ func main() {
 		params := url.Values{}
 		params.Set("secret", decrypted)
 		params.Set("digits", strconv.Itoa(tok.Digits))
-		u := url.URL{
+		//u := url.URL{
+		//	Scheme:   "otpauth",
+		//	Host:     "totp",
+		//	Path:     tok.Description(),
+		//	RawQuery: params.Encode(),
+		//}
+		s := strings.Split(params.Encode(), "&")
+		//p := strings.Split(s[1],"=")
+		d := strings.Split(s[0],"=")
+		//fmt.Println(u.String())
+		//fmt.Println( ", base32 secret: "+decrypted+", digits: " +d[1]+", period: "+params.Encode()+";"+p[1])
+		// output to filename (.txt for Molto2 , .html for others)
+		
+		// get last 10 chars
+		length := len(filename)
+		last4 :=  filename[length-4:length]
+  
+		
+		if (last4=="html") {
+		f, err := os.OpenFile(filename,
+			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Println(err)
+		}
+			u := url.URL{
 			Scheme:   "otpauth",
 			Host:     "totp",
 			Path:     tok.Description(),
 			RawQuery: params.Encode(),
 		}
-		fmt.Println(u.String())
+		// fmt.Println(u.String())
+
+		 
+		defer f.Close()
+		//Generate HTML file 
+		 
+		   
+	
+		  png, err := qrcode.Encode(u.String(), qrcode.Medium, 256)
+		  
+			 
+			 
+		  
+		
+		
+		sEnc := base64.StdEncoding.EncodeToString([]byte(png))
+		
+		
+		if _, err := f.WriteString( tok.Description()+"<br><img src='data:image/png;base64,"+sEnc+"'><br>Secret in Base32 : <kbd>"+decrypted+"</kbd><hr> \n"); err != nil {
+			log.Println(err)
+		}
+		
+		 
+		} 
+		
+			if (last4==".txt") {
+		f, err := os.OpenFile(filename,
+			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Println(err)
+		}
+		line= lineCounter(filename)
+		line= line +1 
+		name1=tok.Description()
+		name1=strings.Replace(name1,":","_",10)
+		name1=strings.Replace(name1,"@","_",10)
+		if  len(name1)>12 {
+		name1 = name1[0:12]
+		}
+		defer f.Close()
+		if _, err := f.WriteString( strconv.Itoa(line-1)+"                   "+decrypted+"                   sha1                   "+d[1] +"                   30                   yes                   yes                   " +name1+"\n"); err != nil {
+			log.Println(err)
+		}
+		} 
+		
+		
+		
 	}
 	for _, app := range appsResponse.AuthenticatorApps {
 		tok, err := app.Token()
@@ -107,15 +216,25 @@ func main() {
 		params.Set("secret", tok)
 		params.Set("digits", strconv.Itoa(app.Digits))
 		params.Set("period", "10")
-		u := url.URL{
-			Scheme:   "otpauth",
-			Host:     "totp",
-			Path:     app.Name,
-			RawQuery: params.Encode(),
-		}
-		fmt.Println(u.String())
+		//u := url.URL{
+	//		Scheme:   "otpauth",
+		//	Host:     "totp",
+		//	Path:     app.Name,
+		//	RawQuery: params.Encode(),
+		//}
+		// fmt.Println(u.String())
+		 
+		//s := strings.Split(params.Encode(), "&")
+		//p := strings.Split(s[1],"=")
+		//fmt.Println("name:"+u.Path+", base32 secret: "+tok+", digits: " +strconv.Itoa(app.Digits)+", period: "+p[1])
 	}
-}
+
+	//fmt.Print("The migration file has been generated :"+ filename)
+	  fmt.Print("\nPress 'Enter' to exit...")
+  bufio.NewReader(os.Stdin).ReadBytes('\n') 
+  
+  
+	}
 
 func newInteractiveDeviceRegistration() (deviceRegistration, error) {
 	var regr deviceRegistration
