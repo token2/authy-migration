@@ -1,4 +1,4 @@
-package github.com/token2/authy-migration/cmd/authy-export
+package main
 
 import (
 	"bufio"
