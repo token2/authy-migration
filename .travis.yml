@@ -15,5 +15,5 @@ deploy:
     - authy-export-windows-amd64.exe
   skip_cleanup: true
   on:
-    repo: alexzorin/authy
+    repo: token2/authy-migration
     tags: true
