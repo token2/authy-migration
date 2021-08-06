@@ -1,6 +1,6 @@
 module github.com/token2/authy-migration/cmd/authy-export
 
-go 1.12
+go 1.2
 
 require (
 	github.com/token2/authy-migration v0.3.2
