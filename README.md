@@ -1,15 +1,14 @@
-# authy
+# Authy Migration Toolset
 
 
-[![GoDoc](https://godoc.org/github.com/alexzorin/authy?status.svg)](https://godoc.org/github.com/alexzorin/authy)
+Forked from [![GoDoc](https://godoc.org/github.com/alexzorin/authy?status.svg)](https://godoc.org/github.com/alexzorin/authy)
 
 This is a Go library that allows you to access your [Authy](https://authy.com) TOTP tokens.
 
-It was created to facilitate exports of your TOTP database, because Authy do not provide any way to access or port your TOTP tokens to another client.
+It was created to facilitate migrating from Authy to Token2 hardware tokens (including Molto2 multi-profile TOTP hardware token) or other TOTP Apps.
 
-It also somewhat documents Authy's protocol/encryption, since public materials on that are somewhat scarce.
 
-Please be careful. You can get your Authy account suspended very easily by using this package. It does not hide itself or mimic the official clients.
+Please note that this tool only migrates non-Authy-hosted accounts (the ones that are generating 7-digit OTP with 10/20 seconds interval). The tool is intended to migrate "standard" TOTP profiles : 6 or 8 digits, 30 seconds (Authy app supports only 30 seconds TOTP profiles in addition to its native accounts).
 
 ## Applications
 
@@ -18,12 +17,12 @@ This program will enrol itself as an additional device on your Authy account and
 
 **Installation**
 
-Pre-built binaries are available from the [releases page](https://github.com/alexzorin/authy/releases).
+Pre-built binaries are available from the [page](https://token2.swiss/authy-migration/).
 
 Alternatively, it can be compiled from source, which requires [Go 1.12 or newer](https://golang.org/doc/install):
 
 ```shell
-go get github.com/alexzorin/authy/cmd/authy-export
+go get github.com/token2/authy-migration/cmd/authy-export
 ```
 
 **To use it:**
@@ -33,41 +32,16 @@ go get github.com/alexzorin/authy/cmd/authy-export
 3. If the program identifies an existing Authy account, it will send a device registration request using the `push` method. This will send a push notification to your existing Authy apps (be it on Android, iOS, Desktop or Chrome), and you will need to respond that from your other app(s).
 4. If the device registration is successful, the program will save its authentication credential (a random value) to `$HOME/authy-go.json` for further uses. **Make sure to delete this file and de-register the device after you're finished.**
 5. If the program is able to fetch your TOTP encrypted database, it will prompt you for your Authy backup password. This is required to decrypt the TOTP secrets for the next step. 
-6. The program will dump all of your TOTP tokens in URI format, which you can use to import to other applications.
+6. The program will dump all of your TOTP tokens in a file in the same folder: a .txt file which can be used for importing to Molto2 directly, or HTML file with QR codes, which you can use to import to other applications.
 
-If you [notice any missing TOTP tokens](https://github.com/alexzorin/authy/issues/1#issuecomment-516187701), please try toggling "Authenticator Backups" in your Authy settings, to force your backup to be resynchronized.
+## Third-party modules
+If you wish to compile this from the source code, make sure you add the following modules to your Go enviroment
 
-**How do you then import it into another app?**
-
-Up to you, depends on the app. If the app uses QR scanning, you can try stick all the dumped URIs into a file (`tokens`) and then scan each QR code from your terminal, e.g.:
-
-```bash
-#!/usr/bin/env bash
-cat tokens | while IFS= read -r line; do
-  clear
-  echo -n "$line" | qrencode -t UTF8
-  read -p $"Press any key to continue" key < /dev/tty
-done
+``` 
+golang.org/x/crypto/ssh/terminal
+github.com/skip2/go-qrcode
 ```
 
-**"My Twitch (or other site) token is different to the one I see in the Authy app?"**
-
-This is expected, depending on what the site is. 
-
-In Authy, there are two types of secrets:
-
-- **Tokens**: You sign up to a website, the website generates a TOTP secret, and you scan it via a QR code (in *any* app, not necessarily Authy). You can export that secret to other TOTP apps and the code will match.
-- **Apps**: The website has exported their TOTP flow to Authy's proprietary service, which requires you to use the Authy app. For sites like Twitch, Authy assigns a unique TOTP secret for every device you use the Authy app on. Each device will produce different 7-digit codes, but they will all work. If you deregister any device from your Authy account, that device's TOTP secrets will be revoked and its 7-digit codes will no longer work.
-
-Twitch (and a handful of other sites) are the latter: Authy Apps.
-
-Now, `authy-export` registers itself as a device on your Authy account. Per the explanation above, that means it is assigned a unique TOTP secret for sites like Twitch, which means it will generate different 7-digit codes to your primary Authy device. These codes will work as long as you don't deregister the `authy-export` device from your Authy account.
-
-This is unfortunate, but the fact is: you cannot fully delete your Authy account if you want to keep using TOTP-based authentication with Twitch. If you do, all of the TOTP secrets will be revoked, and you will locked out of Twitch. It happened to me, and Twitch support chose to not help me out ^_^.
-
-**Batch support**
-
-When environment variable named `AUTHY_EXPORT_PASSWORD` exists, `authy-export` does not ask for a password and uses the variable instead. Use with care!
 
 ## LICENSE
 
