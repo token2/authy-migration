@@ -16,7 +16,7 @@ import (
 	 
 	 
 	"encoding/base64"
-	"github.com/alexzorin/authy"
+	"github.com/token2/authy-migration"
 	
 	"golang.org/x/crypto/ssh/terminal"
 )
