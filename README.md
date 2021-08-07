@@ -21,8 +21,16 @@ Pre-built binaries are available from the [page](https://www.token2.swiss/site/p
 
 Alternatively, it can be compiled from source, which requires [Go 1.12 or newer](https://golang.org/doc/install):
 
+Follow the steps below to run the script from source code:
+Install [Go 1.12 or newer](https://golang.org/doc/install)
+Install the qrcode module (other required modules will be installed automatically on the first run)
 ```shell
-go get github.com/token2/authy-migration/cmd/authy-export
+go get github.com/skip2/go-qrcode
+```
+Download the latest version of the [toolset](https://github.com/token2/authy-migration/archive/refs/heads/master.zip)
+Unzip to a folder, launch command line and change folder to /folder/cmd/authy-export and launch the command
+```shell
+go run authy-export.go
 ```
 
 **To use it:**
@@ -35,10 +43,9 @@ go get github.com/token2/authy-migration/cmd/authy-export
 6. The program will dump all of your TOTP tokens in a file in the same folder: a .txt file which can be used for importing to Molto2 directly, or HTML file with QR codes, which you can use to import to other applications.
 
 ## Third-party modules
-If you wish to compile this from the source code, make sure you add the following modules to your Go enviroment
+The module below is used for generating QR codes
 
 ``` 
-golang.org/x/crypto/ssh/terminal
 github.com/skip2/go-qrcode
 ```
 
