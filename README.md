@@ -32,7 +32,7 @@ go get github.com/skip2/go-qrcode
 ```
 Download the latest version of the [toolset](https://github.com/token2/authy-migration/archive/refs/heads/master.zip)
 
-Unzip to a folder, launch command line and change folder to /folder/cmd/authy-export and launch the command
+Unzip to a folder, launch command line and change folder to {path}/cmd/authy-export and launch the command
 
 ```shell
 go run authy-export.go
