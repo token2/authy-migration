@@ -22,13 +22,18 @@ Pre-built binaries are available from the [page](https://www.token2.swiss/site/p
 Alternatively, it can be compiled from source, which requires [Go 1.12 or newer](https://golang.org/doc/install):
 
 Follow the steps below to run the script from source code:
+
 Install [Go 1.12 or newer](https://golang.org/doc/install)
+
 Install the qrcode module (other required modules will be installed automatically on the first run)
+
 ```shell
 go get github.com/skip2/go-qrcode
 ```
 Download the latest version of the [toolset](https://github.com/token2/authy-migration/archive/refs/heads/master.zip)
+
 Unzip to a folder, launch command line and change folder to /folder/cmd/authy-export and launch the command
+
 ```shell
 go run authy-export.go
 ```
