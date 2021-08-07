@@ -50,7 +50,7 @@ go run authy-export.go
 ## Third-party modules
 The module below is used for generating QR codes
  
-github.com/skip2/go-qrcode
+[github.com/skip2/go-qrcode](https://github.com/skip2/go-qrcode)
  
 
 
