@@ -45,7 +45,7 @@ func lineCounter(fileName string) int {
 
 func main() {
 	var filename string
-    	var name1 string
+	var name1 string
 	var line int
 	var err error
 
@@ -56,6 +56,13 @@ func main() {
 		fmt.Print("A filename is required")
 	}
 	filename = strings.TrimSpace(sc.Text())
+
+	length := len(filename)
+	if length < 4 {
+		log.Fatalf("Filename %s too short; did you include the extension?", filename)
+	}
+	last4 :=  filename[length - 4:length]
+
 	fmt.Print("File: "+ filename)
 
 	// If we don't already have a registered device, prompt the user for one
@@ -107,9 +114,6 @@ func main() {
 			log.Fatalf("Failed to read the password: %v", err)
 		}
 	}
-
-	length := len(filename)
-	last4 :=  filename[length - 4:length]
 
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
