@@ -118,7 +118,7 @@ func main() {
 	}
 
 	if (last4 == "html") {
-		_, err := f.WriteString(`<!DOCTYPE html>
+		_, err = f.WriteString(`<!DOCTYPE html>
 			<html>
 			<head>
 			    <title>2FA Codes</title>
@@ -126,7 +126,7 @@ func main() {
 				body > div {display: grid; grid-template-columns: repeat(auto-fill,minmax(256px, 1fr));}
 				div > div {text-align: center; border: 1px dashed #ccc; padding: 5px; margin: 5px; overflow: hidden; text-overflow: ellipsis;}
 				img {filter: blur(6px);}
-				img:hover {filter: none;}
+				div:hover > img {filter: none;}
 			    </style>
 			</head>
 			<body>
@@ -165,10 +165,14 @@ func main() {
 			}
 
 			png, err := qrcode.Encode(u.String(), qrcode.Medium, 256)
-			sEnc := base64.StdEncoding.EncodeToString([]byte(png))
-			_, err := f.WriteString("<div>" + tok.Description() + "<br/><img src='data:image/png;base64," + sEnc + "'><br/><kbd>" + decrypted + "</kbd></div>\n")
 			if err != nil {
-				log.Println(err)
+				log.Printf("Failed to generate QR code: %v", err)
+				continue
+			}
+			sEnc := base64.StdEncoding.EncodeToString([]byte(png))
+			_, err = f.WriteString("<div>" + tok.Description() + "<br/><img src='data:image/png;base64," + sEnc + "'><br/><kbd>" + decrypted + "</kbd></div>\n")
+			if err != nil {
+				log.Printf("Error writing to file: %v", err)
 			}
 		} else if (last4 == ".txt") {
 			line = lineCounter(filename)
@@ -179,7 +183,7 @@ func main() {
 			if len(name1) > 12 {
 				name1 = name1[0:12]
 			}
-			_, err := f.WriteString(strconv.Itoa(line - 1) + "                   " + decrypted + "                   sha1                   " + d[1] + "                   30                   yes                   yes                   "  + name1 + "\n")
+			_, err = f.WriteString(strconv.Itoa(line - 1) + "                   " + decrypted + "                   sha1                   " + d[1] + "                   30                   yes                   yes                   "  + name1 + "\n")
 			if err != nil {
 				log.Println(err)
 			}
@@ -187,7 +191,7 @@ func main() {
 	}
 
 	if (last4 == "html") {
-		_, err := f.WriteString(`    </div>
+		_, err = f.WriteString(`    </div>
 			    <script>
 				let kbds = document.getElementsByTagName("kbd");
 				for (const kbd of kbds) {
@@ -197,6 +201,9 @@ func main() {
 			</body>
 			</html>
 		`)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 	defer f.Close()
