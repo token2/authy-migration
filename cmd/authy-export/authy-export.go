@@ -127,6 +127,11 @@ func main() {
 				div > div {text-align: center; border: 1px dashed #ccc; padding: 5px; margin: 5px; overflow: hidden; text-overflow: ellipsis;}
 				img {filter: blur(6px);}
 				div:hover > img {filter: none;}
+				@media print {
+					img {filter: none !important;}
+					p {display: none;}
+					div > div {word-wrap: break-word;}
+				}
 			    </style>
 			</head>
 			<body>
