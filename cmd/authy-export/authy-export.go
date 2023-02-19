@@ -129,11 +129,12 @@ func main() {
 			    <style>
 				body > div {display: grid; grid-template-columns: repeat(auto-fill,minmax(256px, 1fr));}
 				div > div {text-align: center; border: 1px dashed #ccc; padding: 5px; margin: 5px; overflow: hidden; text-overflow: ellipsis;}
+				div > div p {height: 2rem;}
 				img {filter: blur(6px);}
 				div:hover > img {filter: none;}
 				@media print {
 					img {filter: none !important;}
-					p {display: none;}
+					body > p {display: none;}
 					div > div {word-wrap: break-word;}
 				}
 			    </style>
@@ -179,7 +180,7 @@ func main() {
 				continue
 			}
 			sEnc := base64.StdEncoding.EncodeToString([]byte(png))
-			_, err = f.WriteString("<div>" + tok.Description() + "<br/><img src='data:image/png;base64," + sEnc + "'><br/><kbd>" + decrypted + "</kbd></div>\n")
+			_, err = f.WriteString("<div><p>" + tok.Description() + "</p><img src='data:image/png;base64," + sEnc + "'><br/><kbd>" + decrypted + "</kbd></div>\n")
 			if err != nil {
 				log.Printf("Error writing to file: %v", err)
 			}
