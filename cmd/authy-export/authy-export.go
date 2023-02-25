@@ -38,30 +38,32 @@ func lineCounter(fileName string) int {
     for scanner.Scan() {
         //line := scanner.Text()
         // Append line to result.
-        result = result +1
+        result = result + 1
     }
     return result
 }
 
 func main() {
-    
-	//ask for export file name and type
 	var filename string
-    var name1 string
+	var name1 string
 	var line int
 	var err error
- 
-	 
+
 	sc := bufio.NewScanner(os.Stdin)
-	
-	fmt.Print("\nExport file name -.txt for Molto2 and .html for regular TOTP profiles  : ")
+
+	fmt.Print("\nExport file name: end with .txt for Molto2, and with .html for regular TOTP profiles: ")
 	if !sc.Scan() {
 		fmt.Print("A filename is required")
 	}
 	filename = strings.TrimSpace(sc.Text())
-		fmt.Print("File: "+filename)
-	
 
+	length := len(filename)
+	if length < 4 {
+		log.Fatalf("Filename %s too short; did you include the extension?", filename)
+	}
+	last4 :=  filename[length - 4:length]
+
+	fmt.Print("File: "+ filename)
 
 	// If we don't already have a registered device, prompt the user for one
 	regr, err := loadExistingDeviceRegistration()
@@ -113,7 +115,43 @@ func main() {
 		}
 	}
 
-	// Print out in https://github.com/google/google-authenticator/wiki/Key-Uri-Format format
+	f, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+	if err != nil {
+		log.Fatalf("Error opening file: %v", err)
+	}
+
+	if (last4 == "html") {
+		_, err = f.WriteString(`<!DOCTYPE html>
+			<html>
+			<head>
+			    <title>2FA Codes</title>
+			    <style>
+				body > div {display: grid; grid-template-columns: repeat(auto-fill,minmax(256px, 1fr));}
+				div > div {text-align: center; border: 1px dashed #ccc; padding: 5px; margin: 5px; overflow: hidden; text-overflow: ellipsis;}
+				div > div p {height: 2rem;}
+				img {filter: blur(6px);}
+				div:hover > img {filter: none;}
+				@media print {
+					img {filter: none !important;}
+					body > p {display: none;}
+					div > div {word-wrap: break-word;}
+				}
+			    </style>
+			</head>
+			<body>
+			    <p>
+				Hover over the QR code to display it for capture, or double click on the text code to copy it to your clipboard.
+			    </p>
+			    <div>
+		`)
+		if err != nil {
+			log.Fatalf("Can't write file %v", err)
+		}
+	} else if (last4 != ".txt") {
+		log.Fatalf("Invalid filename %s must end with .html or .txt", filename)
+	}
+
 	log.Println("TOTP profile migration file is being generated:\n")
 	for _, tok := range tokensResponse.AuthenticatorTokens {
 		decrypted, err := tok.Decrypt(string(pp))
@@ -125,84 +163,61 @@ func main() {
 		params := url.Values{}
 		params.Set("secret", decrypted)
 		params.Set("digits", strconv.Itoa(tok.Digits))
-		//u := url.URL{
-		//	Scheme:   "otpauth",
-		//	Host:     "totp",
-		//	Path:     tok.Description(),
-		//	RawQuery: params.Encode(),
-		//}
 		s := strings.Split(params.Encode(), "&")
-		//p := strings.Split(s[1],"=")
 		d := strings.Split(s[0],"=")
-		//fmt.Println(u.String())
-		//fmt.Println( ", base32 secret: "+decrypted+", digits: " +d[1]+", period: "+params.Encode()+";"+p[1])
-		// output to filename (.txt for Molto2 , .html for others)
-		
-		// get last 10 chars
-		length := len(filename)
-		last4 :=  filename[length-4:length]
-  
-		
-		if (last4=="html") {
-		f, err := os.OpenFile(filename,
-			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			log.Println(err)
-		}
-			u := url.URL{
-			Scheme:   "otpauth",
-			Host:     "totp",
-			Path:     tok.Description(),
-			RawQuery: params.Encode(),
-		}
-		// fmt.Println(u.String())
 
-		 
-		defer f.Close()
-		//Generate HTML file 
-		 
-		   
-	
-		  png, err := qrcode.Encode(u.String(), qrcode.Medium, 256)
-		  
-			 
-			 
-		  
-		
-		
-		sEnc := base64.StdEncoding.EncodeToString([]byte(png))
-		
-		
-		if _, err := f.WriteString( tok.Description()+"<br><img src='data:image/png;base64,"+sEnc+"'><br>Secret in Base32 : <kbd>"+decrypted+"</kbd><hr> \n"); err != nil {
-			log.Println(err)
+		if (last4 == "html") {
+			u := url.URL{
+				Scheme:   "otpauth",
+				Host:     "totp",
+				Path:     tok.Description(),
+				RawQuery: params.Encode(),
+			}
+
+			png, err := qrcode.Encode(u.String(), qrcode.Medium, 256)
+			if err != nil {
+				log.Printf("Failed to generate QR code: %v", err)
+				continue
+			}
+			sEnc := base64.StdEncoding.EncodeToString([]byte(png))
+			_, err = f.WriteString("<div><p>" + tok.Description() + "</p><img src='data:image/png;base64," + sEnc + "'><br/><kbd>" + decrypted + "</kbd></div>\n")
+			if err != nil {
+				log.Printf("Error writing to file: %v", err)
+			}
+		} else if (last4 == ".txt") {
+			line = lineCounter(filename)
+			line = line + 1
+			name1 = tok.Description()
+			name1 = strings.Replace(name1, ":", "_", 10)
+			name1 = strings.Replace(name1, "@", "_", 10)
+			if len(name1) > 12 {
+				name1 = name1[0:12]
+			}
+			_, err = f.WriteString(strconv.Itoa(line - 1) + "                   " + decrypted + "                   sha1                   " + d[1] + "                   30                   yes                   yes                   "  + name1 + "\n")
+			if err != nil {
+				log.Println(err)
+			}
 		}
-		
-		 
-		} 
-		
-			if (last4==".txt") {
-		f, err := os.OpenFile(filename,
-			os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	}
+
+	if (last4 == "html") {
+		_, err = f.WriteString(`    </div>
+			    <script>
+				let kbds = document.getElementsByTagName("kbd");
+				for (const kbd of kbds) {
+				    kbd.addEventListener("dblclick", e => navigator.clipboard.writeText(e.target.textContent))
+				}
+			    </script>
+			</body>
+			</html>
+		`)
 		if err != nil {
 			log.Println(err)
 		}
-		line= lineCounter(filename)
-		line= line +1 
-		name1=tok.Description()
-		name1=strings.Replace(name1,":","_",10)
-		name1=strings.Replace(name1,"@","_",10)
-		if  len(name1)>12 {
-		name1 = name1[0:12]
-		}
-		defer f.Close()
-		if _, err := f.WriteString( strconv.Itoa(line-1)+"                   "+decrypted+"                   sha1                   "+d[1] +"                   30                   yes                   yes                   " +name1+"\n"); err != nil {
-			log.Println(err)
-		}
-		} 
-		
-		
-		
 	}
+
+	defer f.Close()
+
 	for _, app := range appsResponse.AuthenticatorApps {
 		tok, err := app.Token()
 		if err != nil {
@@ -213,25 +228,11 @@ func main() {
 		params.Set("secret", tok)
 		params.Set("digits", strconv.Itoa(app.Digits))
 		params.Set("period", "10")
-		//u := url.URL{
-	//		Scheme:   "otpauth",
-		//	Host:     "totp",
-		//	Path:     app.Name,
-		//	RawQuery: params.Encode(),
-		//}
-		// fmt.Println(u.String())
-		 
-		//s := strings.Split(params.Encode(), "&")
-		//p := strings.Split(s[1],"=")
-		//fmt.Println("name:"+u.Path+", base32 secret: "+tok+", digits: " +strconv.Itoa(app.Digits)+", period: "+p[1])
 	}
 
-	//fmt.Print("The migration file has been generated :"+ filename)
-	  fmt.Print("\nPress 'Enter' to exit...")
-  bufio.NewReader(os.Stdin).ReadBytes('\n') 
-  
-  
-	}
+	fmt.Print("\nPress 'Enter' to exit...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
+}
 
 func newInteractiveDeviceRegistration() (deviceRegistration, error) {
 	var regr deviceRegistration

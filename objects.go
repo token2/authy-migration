@@ -187,13 +187,18 @@ func (t AuthenticatorToken) Decrypt(passphrase string) (string, error) {
 // Description returns OriginalName if not empty, otherwise Name,
 // otherwise `Token-{UniqueID}`.
 func (t AuthenticatorToken) Description() string {
+	acct_type := ""
+	if t.AccountType != "" {
+		acct_type = " (" + t.AccountType + ")"
+	}
+		
 	if t.OriginalName != "" {
-		return t.OriginalName
+		return t.OriginalName + acct_type
 	}
 	if t.Name != "" {
-		return t.Name
+		return t.Name + acct_type
 	}
-	return "Token-" + t.UniqueID
+	return "Token-" + t.UniqueID + acct_type
 }
 
 // AuthenticatorAppsResponse is the response from:
