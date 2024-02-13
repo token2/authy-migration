@@ -1,8 +1,6 @@
 # Authy Migration Toolset
 
 
-Forked from [![GoDoc](https://godoc.org/github.com/alexzorin/authy?status.svg)](https://godoc.org/github.com/alexzorin/authy)
-
 This is a Go library that allows you to access your [Authy](https://authy.com) TOTP tokens.
 
 It was created to facilitate migrating from Authy to Token2 hardware tokens (including Molto2 multi-profile TOTP hardware token) or other TOTP Apps.
@@ -25,17 +23,23 @@ Follow the steps below to run the script from source code:
 
 Install [Go 1.12 or newer](https://golang.org/doc/install)
 
+Download the latest version of the [toolset](https://github.com/token2/authy-migration/archive/refs/heads/master.zip):
+
+```shell
+git clone https://github.com/token2/authy-migration.git
+cd authy-migration
+```
+
 Install the qrcode module (other required modules will be installed automatically on the first run)
 
 ```shell
 go get github.com/skip2/go-qrcode
 ```
-Download the latest version of the [toolset](https://github.com/token2/authy-migration/archive/refs/heads/master.zip)
 
 Unzip to a folder, launch command line and change folder to {path}/cmd/authy-export and launch the command
 
 ```shell
-go run authy-export.go
+go run git clone https://github.com/token2/authy-migration.git
 ```
 
 **To use it:**
