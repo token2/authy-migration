@@ -1,6 +1,8 @@
 # Authy Migration Toolset
 
 
+Forked from [![GoDoc](https://godoc.org/github.com/alexzorin/authy?status.svg)](https://godoc.org/github.com/alexzorin/authy)
+
 This is a Go library that allows you to access your [Authy](https://authy.com) TOTP tokens.
 
 It was created to facilitate migrating from Authy to Token2 hardware tokens (including Molto2 multi-profile TOTP hardware token) or other TOTP Apps.
