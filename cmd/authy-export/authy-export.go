@@ -167,6 +167,21 @@ func main() {
 		s := strings.Split(params.Encode(), "&")
 		d := strings.Split(s[0],"=")
 
+		if (last6 == "wa.txt") {
+			u := url.URL{
+				Scheme:   "otpauth",
+				Host:     "totp",
+				Path:     tok.Description(),
+				RawQuery: params.Encode(),
+			}
+
+		  
+			_, err = f.WriteString(u.String() + "\n")
+			if err != nil {
+				log.Printf("Error writing to file: %v", err)
+			}
+		}
+		
 		if (last4 == "html") {
 			u := url.URL{
 				Scheme:   "otpauth",
