@@ -41,7 +41,9 @@ go get github.com/skip2/go-qrcode
 Unzip to a folder, launch command line and change folder to {path}/cmd/authy-export and launch the command
 
 ```shell
+
 go run git clone https://github.com/token2/authy-migration.git
+
 ```
 
 **To use it:**
