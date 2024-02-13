@@ -51,7 +51,7 @@ func main() {
 
 	sc := bufio.NewScanner(os.Stdin)
 
-	fmt.Print("\nExport file name: end with .txt for Molto2, and with .html for regular TOTP profiles: ")
+	fmt.Print("\nExport file name: end with .txt for Molto2, with wa.txt for WinAuth import file, and with .html for regular TOTP profiles: ")
 	if !sc.Scan() {
 		fmt.Print("A filename is required")
 	}
@@ -200,7 +200,7 @@ func main() {
 			if err != nil {
 				log.Printf("Error writing to file: %v", err)
 			}
-		} else if (last4 == ".txt") {
+		} else if (last4 == ".txt" && last6 != "wa.txt") {
 			line = lineCounter(filename)
 			line = line + 1
 			name1 = tok.Description()
