@@ -25,17 +25,25 @@ Follow the steps below to run the script from source code:
 
 Install [Go 1.12 or newer](https://golang.org/doc/install)
 
+Download the latest version of the [toolset](https://github.com/token2/authy-migration/archive/refs/heads/master.zip):
+
+```shell
+git clone https://github.com/token2/authy-migration.git
+cd authy-migration
+```
+
 Install the qrcode module (other required modules will be installed automatically on the first run)
 
 ```shell
 go get github.com/skip2/go-qrcode
 ```
-Download the latest version of the [toolset](https://github.com/token2/authy-migration/archive/refs/heads/master.zip)
 
 Unzip to a folder, launch command line and change folder to {path}/cmd/authy-export and launch the command
 
 ```shell
-go run cmd/authy-export/authy-export.go
+
+go run git clone https://github.com/token2/authy-migration.git
+
 ```
 
 **To use it:**
