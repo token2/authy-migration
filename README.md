@@ -35,7 +35,7 @@ Download the latest version of the [toolset](https://github.com/token2/authy-mig
 Unzip to a folder, launch command line and change folder to {path}/cmd/authy-export and launch the command
 
 ```shell
-go run authy-export.go
+go run cmd/authy-export/authy-export.go
 ```
 
 **To use it:**
