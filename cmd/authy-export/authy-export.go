@@ -62,6 +62,7 @@ func main() {
 		log.Fatalf("Filename %s too short; did you include the extension?", filename)
 	}
 	last4 :=  filename[length - 4:length]
+	last6 :=  filename[length - 6:length]
 
 	fmt.Print("File: "+ filename)
 
@@ -148,7 +149,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Can't write file %v", err)
 		}
-	} else if (last4 != ".txt") {
+	} else if last4 != ".txt" && last6 != ".wa.txt" {
 		log.Fatalf("Invalid filename %s must end with .html or .txt", filename)
 	}
 
