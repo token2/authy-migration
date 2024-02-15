@@ -5,10 +5,10 @@ Forked from [![GoDoc](https://godoc.org/github.com/alexzorin/authy?status.svg)](
 
 This is a Go library that allows you to access your [Authy](https://authy.com) TOTP tokens.
 
-It was created to facilitate migrating from Authy to Token2 hardware tokens (including Molto2 multi-profile TOTP hardware token) or other TOTP Apps. Additionally, it supports exporting profiles to WinAuth, a desktop TOTP app.
+It was created to facilitate migrating from Authy to Token2 hardware tokens (including Molto2 multi-profile TOTP hardware token) or other TOTP Apps. Additionally, it supports exporting profiles to [WinAuth](https://winauth.github.io/winauth/index.html), a desktop TOTP app.
 
 
-Please note that this tool only migrates non-Authy-hosted accounts (the ones that are generating 7-digit OTP with 10/20 seconds interval). The tool is intended to migrate "standard" TOTP profiles : 6 or 8 digits, 30 seconds (Authy app supports only 30 seconds TOTP profiles in addition to its native accounts).
+Please note that this tool only migrates non-Authy-hosted accounts (the ones that are generating 7-digit OTP with 10/20 seconds intervals). The tool is intended to migrate "standard" TOTP profiles: 6 or 8 digits, 30 seconds (Authy app supports only 30 seconds TOTP profiles in addition to its native accounts).
 
 ## Applications
 
