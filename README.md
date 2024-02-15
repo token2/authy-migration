@@ -53,7 +53,7 @@ go run git clone https://github.com/token2/authy-migration.git
 3. If the program identifies an existing Authy account, it will send a device registration request using the `push` method. This will send a push notification to your existing Authy apps (be it on Android, iOS, Desktop or Chrome), and you will need to respond that from your other app(s).
 4. If the device registration is successful, the program will save its authentication credential (a random value) to `$HOME/authy-go.json` for further uses. **Make sure to delete this file and de-register the device after you're finished.**
 5. If the program is able to fetch your TOTP encrypted database, it will prompt you for your Authy backup password. This is required to decrypt the TOTP secrets for the next step. 
-6. The program will dump all of your TOTP tokens in a file in the same folder: a .txt file which can be used for importing to Molto2 directly, or HTML file with QR codes, which you can use to import to other applications. If you plan to import the TOTP profiles exported from Authy to WinAuth, the filename should end with .wa.txt extension.
+6. The program will dump all of your TOTP tokens in a file in the same folder: a **.txt** file which can be used for importing to Molto2 directly, or an **.html** file with QR codes, which you can use to import to other applications. If you plan to import the TOTP profiles exported from Authy to WinAuth, the filename should end with **.wa.txt** extension.
 
 ## Third-party modules
 The module below is used for generating QR codes
