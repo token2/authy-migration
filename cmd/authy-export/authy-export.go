@@ -31,14 +31,17 @@ type deviceRegistration struct {
 
 // Struct for Raivo JSON format
 type raivo struct {
-        Digits  string `json:"digits"`
-        Kind    string `json:"kind"`
-        Algo    string `json:"algorithm"`
-        Counter string `json:"counter"`
-        Timer   string `json:"timer"`
-        Secret  string `json:"secret"`
-        Account string `json:"account"`
-        Issuer  string `json:"issuer"`
+	Digits  string `json:"digits"`
+	Kind    string `json:"kind"`
+	Algo    string `json:"algorithm"`
+	Counter string `json:"counter"`
+	Timer   string `json:"timer"`
+	Secret  string `json:"secret"`
+	Account string `json:"account"`
+	Issuer  string `json:"issuer"`
+	Icontype string `json:"iconType"`
+	Iconvalue string `json:"iconValue"`
+	Pinned  string `json:"pinned"`
 }
 
 
@@ -193,7 +196,10 @@ func main() {
 				Timer:   "30",
 				Secret:  decrypted,
 				Account: "authy-export",
-				Issuer:  tok.Description()})
+				Issuer:  tok.Description(),
+				Icontype: "",
+				Iconvalue: "",
+				Pinned: "false"})
 		}
 
 		if (last6 == "wa.txt") {
