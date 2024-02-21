@@ -29,6 +29,19 @@ type deviceRegistration struct {
 	APIKey   string `json:"api_key,omitempty"`
 }
 
+// Struct for Raivo JSON format
+type raivo struct {
+        Digits  string `json:"digits"`
+        Kind    string `json:"kind"`
+        Algo    string `json:"algorithm"`
+        Counter string `json:"counter"`
+        Timer   string `json:"timer"`
+        Secret  string `json:"secret"`
+        Account string `json:"account"`
+        Issuer  string `json:"issuer"`
+}
+
+
 func lineCounter(fileName string) int {
     f, _ := os.Open(fileName)
     // Create new Scanner.
@@ -48,10 +61,11 @@ func main() {
 	var name1 string
 	var line int
 	var err error
+	var raivos []raivo
 
 	sc := bufio.NewScanner(os.Stdin)
 
-	fmt.Print("\nExport file name: end with .txt for Molto2, with wa.txt for WinAuth import file, and with .html for regular TOTP profiles: ")
+	fmt.Print("\nExport file name: end with .txt for Molto2, with wa.txt for WinAuth import file, .raivos for Raivo, and with .html for regular TOTP profiles: ")
 	if !sc.Scan() {
 		fmt.Print("A filename is required")
 	}
@@ -62,7 +76,10 @@ func main() {
 		log.Fatalf("Filename %s too short; did you include the extension?", filename)
 	}
 	last4 :=  filename[length - 4:length]
-	last6 :=  filename[length - 6:length]
+	last6 := ""
+	if length > 5 {
+		last6 =  filename[length - 6:length]
+	}
 
 	fmt.Print("File: "+ filename)
 
@@ -149,8 +166,8 @@ func main() {
 		if err != nil {
 			log.Fatalf("Can't write file %v", err)
 		}
-	} else if last4 != ".txt" && last6 != ".wa.txt" {
-		log.Fatalf("Invalid filename %s must end with .html or .txt", filename)
+	} else if last4 != ".txt" && last6 != "raivos" && last6 != ".wa.txt" {
+		log.Fatalf("Invalid filename %s must end with .html, .raivos, .wa.txt, or .txt", filename)
 	}
 
 	log.Println("TOTP profile migration file is being generated:\n")
@@ -166,6 +183,18 @@ func main() {
 		params.Set("digits", strconv.Itoa(tok.Digits))
 		s := strings.Split(params.Encode(), "&")
 		d := strings.Split(s[0],"=")
+
+		if (last6 == "raivos") {
+			raivos = append(raivos, raivo{
+				Digits:  "6",
+				Kind:    "TOTP",
+				Algo:    "SHA1",
+				Counter: "0",
+				Timer:   "30",
+				Secret:  decrypted,
+				Account: "authy-export",
+				Issuer:  tok.Description()})
+		}
 
 		if (last6 == "wa.txt") {
 			u := url.URL{
@@ -231,6 +260,12 @@ func main() {
 			log.Println(err)
 		}
 	}
+
+	if last6 == "raivos" {
+		json, _ := json.MarshalIndent(raivos, "", "   ")
+		_, err = f.WriteString(string(json))
+	}
+
 
 	defer f.Close()
 
