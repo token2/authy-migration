@@ -169,7 +169,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Can't write file %v", err)
 		}
-	} else if last4 != ".txt" && last6 != "raivos" && last6 != ".wa.txt" {
+	} else if last4 != ".txt" && last6 != "raivos" && last6 != "wa.txt" {
 		log.Fatalf("Invalid filename %s must end with .html, .raivos, .wa.txt, or .txt", filename)
 	}
 
