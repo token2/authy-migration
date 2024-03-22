@@ -42,7 +42,7 @@ Unzip to a folder, launch command line and change folder to {path}/cmd/authy-exp
 
 ```shell
 
-go run git clone https://github.com/token2/authy-migration.git
+go run authy-export.go
 
 ```
 
