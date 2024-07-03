@@ -1,7 +1,7 @@
 # Authy Migration Toolset
 
 
-* Update 03/07/2024 : It appears that Authy is blocking some of the requests, which unfortunately impairs the functionality of our tool. We are investigating this, but until further notice, this toolset is not usable."
+* Update 03/07/2024 : It appears that Authy is blocking some of the requests, which unfortunately impairs the functionality of our tool. We are investigating this, **but until further notice, this toolset is not usable.** 
 
 
 Forked from [![GoDoc](https://godoc.org/github.com/alexzorin/authy?status.svg)](https://godoc.org/github.com/alexzorin/authy)
